@@ -1,0 +1,6 @@
+server: your.nas.fqdn
+storage: 1000T
+existingPath:  /volume1/services/k8s/permanent
+volumes:
+  - name: foobar-config
+    path: /foobar-config

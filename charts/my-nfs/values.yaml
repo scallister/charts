@@ -1,0 +1,11 @@
+# Example values
+#
+#server: <fqdn to nfs server>
+storage: 1000T  # Intentionally set high for home use
+# The root folder from which sub folders should be created
+#existingPath: /volume1/services/k8s/permanent
+volumes:
+# - name: foo-config
+#   path: /foo/config
+# - name: foo-data
+#   path: /foo/data

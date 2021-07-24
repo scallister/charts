@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .name | quote }}
+  name: nfs-create-folder--{{ .name | quote }}
   namespace: {{ $.Release.Namespace }}
 spec:
   capacity:
@@ -19,6 +19,39 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: nfs-create-folder--{{ .name | quote }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
+  volumeName: {{ .name | quote }}
+  resources:
+    requests:
+      storage: {{ $.Values.storage  }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .name | quote }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  capacity:
+    {{- /* $ is required because in flow functions like range . gets replaced with a local value */}}
+    storage: {{ $.Values.storage }}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    {{- $existingPathTrimmed := $.Values.existingPath | trimSuffix "/" }}
+    {{- $pathTrimmed := .path | trimPrefix "/" }}
+    {{- $combinedPath := printf "%s/%s" $existingPathTrimmed $pathTrimmed}}
+    path: {{ $combinedPath | quote }}
+    server: {{ $.Values.server }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
   name: {{ .name | quote }}
   namespace: {{ $.Release.Namespace }}
 spec:
@@ -29,4 +62,4 @@ spec:
   resources:
     requests:
       storage: {{ $.Values.storage  }}
-{{- end }}
+  {{- end }}
